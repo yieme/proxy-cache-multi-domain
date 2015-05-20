@@ -14,6 +14,7 @@ var options             = {
   packageSeperator: '/',
   fileSeperator:    '+',
   dir:              './tmp',
+  logRequest:       false,
   defaultDomain:    'cdnjs',
   domain: {
     cdnjs:      'https://cdnjs.cloudflare.com/ajax/libs/$package/$version/$file',
@@ -74,6 +75,10 @@ function proxyCacheMultiDomain(req, callback) {
     return proxyCacheMultiDomain
   }
 
+  if (options.logRequest) {
+    var logger = (req.locals && req.locals._log) ? req.locals._log : console
+    logger.info('proxyCacheMultiDomain:', req.url)
+  }
   var urls = buildFileList(req.url, callback)
   if (!urls) callback(new Error('Missing URL'))
   proxyCacheMultiFile(urls, callback)
