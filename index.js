@@ -19,7 +19,7 @@ var options             = {
     cdnjs:      'https://cdnjs.cloudflare.com/ajax/libs/$package/$version/$file',
     jsdelivr:   'https://cdn.jsdelivr.net/$package/$version/$file',
     google:     'https://ajax.googleapis.com/ajax/libs/$package/$version/$file',
-    bootstrap:  'https://maxcdn.bootstrapcdn.com/bootstrap/$package/$file',
+    bootstrap:  'https://maxcdn.bootstrapcdn.com/$package/$version/$file',
     bootswatch: 'https://maxcdn.bootstrapcdn.com/bootswatch/$version/$package/$file',
   }
 }
@@ -55,11 +55,7 @@ function buildFileList(urls, errorCallback) {
     for (var f=0, len2 = fileset.length; f < len2; f++) {
       var file = fileset[f]
       if (file.substr(0,1) == '.') {
-        if (domain == 'bootswatch') {
-          file = 'bootstrap' + file
-        } else {
-          file = packag + file
-        }
+        file = (domain == 'bootswatch') ? 'bootstrap' + file : packag + file
       }
       if (file.substr(0,1) == '/') file = file.substr(1, file.length-1)
       file = template.replace('$package', lowerPackage).replace('$version', version).replace('$file', file)
