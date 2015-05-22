@@ -1,6 +1,6 @@
 {
   "name": "proxy-cache-multi-domain",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Proxy Cache for Multiple Domains",
   "main": "index.js",
   "scripts": {
