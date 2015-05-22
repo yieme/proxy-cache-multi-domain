@@ -7,6 +7,13 @@
 'use strict';
 var _                   = require('lodash')
 var proxyCacheMultiFile = require('proxy-cache-multi-file')
+var logger      = {
+  info:  function(msg) { console.log('info:', msg) },
+  debug: function(msg) { console.log('debug:', msg) },
+  warn:  function(msg) { console.warn('warn:', msg) },
+  error: function(msg) { console.error('error:', msg) },
+  log:   console.log,
+}
 var options             = {
   groupSeperator:   ',',
   domainSeperator:  ':',
@@ -14,7 +21,7 @@ var options             = {
   packageSeperator: '/',
   fileSeperator:    '+',
   dir:              './tmp',
-  logRequest:       false,
+  logger:           logger,
   defaultDomain:    'cdnjs',
   domain: {
     cdnjs:      'https://cdnjs.cloudflare.com/ajax/libs/$package/$version/$file',
@@ -75,10 +82,8 @@ function proxyCacheMultiDomain(req, callback) {
     return proxyCacheMultiDomain
   }
 
-  if (options.logRequest) {
-    var logger = (req.locals && req.locals._log) ? req.locals._log : console
-    logger.info('proxyCacheMultiDomain:', req.url)
-  }
+  options.logger.debug('proxyCacheMultiDomain: ' + req.url)
+
   var urls = buildFileList(req.url, callback)
   if (!urls) callback(new Error('Missing URL'))
   proxyCacheMultiFile(urls, callback)
