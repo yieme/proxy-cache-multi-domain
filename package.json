@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "lodash": "^3.8.0",
-    "proxy-cache-multi-file": "^0.4.5"
+    "proxy-cache-multi-file": "^0.4.6"
   },
   "devDependencies": {
     "chai": "~1.10.0",
