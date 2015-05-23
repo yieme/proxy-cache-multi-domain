@@ -32,7 +32,14 @@ var options             = {
   }
 }
 
-function buildFileList(urls, errorCallback) {
+function buildFileList(urls, callback) {
+  function callbackError(param) {
+    param.in   = (param.in) ? 'proxyCacheMultiDomain.buildFileList' + '.' + param.in : 'proxyCacheMultiDomain.buildFileList'
+    param.urls = req.urls
+    logger.warn(JSON.stringify(param))
+    return callback('{ "code": 404, "error": "Not Found" }')
+  }
+
   var groups   = urls
   if ('string' == typeof urls) {
     if (urls.substr(0,1) == '/') req.url.substr(1,req.url.length-1)
@@ -45,7 +52,7 @@ function buildFileList(urls, errorCallback) {
   for (var i=0, len=groups.length; i < len; i++) {
     var group = groups[i]
     var slash = group.indexOf(options.packageSeperator)
-    if (slash < 0) return errorCallback('invalid package / filename')
+    if (slash < 0) return callbackError({ err: 'Invalid package / filename', group: group })
     var part = group.substr(0, slash).split(options.versionSeperator)
     var fileset = group.substr(slash+1, group.length - slash -1).split(options.fileSeperator)
     var version = part[1]
@@ -59,7 +66,7 @@ function buildFileList(urls, errorCallback) {
     var lowerPackage = packag.toLowerCase()
 //    console.log('domain:', domain, '- packag', packag, '- version', version)
     template = options.domain[domain]
-    if (!template) return errorCallback('invalid package domain: ' + domain)
+    if (!template) return callbackError({ err: 'Invalid package domain', domain: domain })
     for (var f=0, len2 = fileset.length; f < len2; f++) {
       var file = fileset[f]
       if (file.substr(0,1) == '.') {
@@ -76,6 +83,13 @@ function buildFileList(urls, errorCallback) {
 
 
 function proxyCacheMultiDomain(req, callback) {
+  function callbackError(param) {
+    param.in  = (param.in) ? 'proxyCacheMultiDomain' + '.' + param.in : 'proxyCacheMultiDomain'
+    param.url = req.url
+    logger.warn(JSON.stringify(param))
+    return callback('{ "code": 404, "error": "Not Found" }')
+  }
+
   if (!callback) {
     options = _.extend(options, req)
     proxyCacheMultiFile(options)
@@ -85,7 +99,7 @@ function proxyCacheMultiDomain(req, callback) {
   options.logger.debug('proxyCacheMultiDomain: ' + req.url)
 
   var urls = buildFileList(req.url, callback)
-  if (!urls) callback(new Error('Missing URL'))
+  if (!urls) return callbackError({ err: 'Missing URL' })
   proxyCacheMultiFile(urls, callback)
 }
 
