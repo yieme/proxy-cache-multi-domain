@@ -37,7 +37,7 @@ function buildFileList(urls, callback) {
     param.in   = (param.in) ? 'proxyCacheMultiDomain.buildFileList' + '.' + param.in : 'proxyCacheMultiDomain.buildFileList'
     param.urls = req.urls
     logger.warn(JSON.stringify(param))
-    return callback('{ "code": 404, "error": "Not Found" }')
+    return callback(null, { headers: { code: 404 }, body: '{ "error": "Not Found" }' })
   }
 
   var groups   = urls
